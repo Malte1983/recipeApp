@@ -312,11 +312,15 @@ function RecipeList() {
 	};
 
 	const formatAmount = (amount) => {
-		return amount === 'nach Bedarf'
-			? amount
-			: Number.isInteger(amount)
-			? amount
-			: amount.toFixed(2);
+		if (amount === 'nach Bedarf') {
+			return amount;
+		}
+		const numericAmount = parseFloat(amount);
+		return Number.isNaN(numericAmount)
+			? amount // Falls amount nicht in eine Zahl umgewandelt werden kann, gib es unverändert zurück
+			: Number.isInteger(numericAmount)
+			? numericAmount
+			: numericAmount.toFixed(2);
 	};
 
 	const handlePortionChange = (newPortions) => {
@@ -476,7 +480,9 @@ function RecipeList() {
 							/>
 							<p className='mb-2'>{selectedRecipe.description}</p>
 							<div className='flex'>
-								<label className='flex items-center mb-2'>Kategorie: </label>
+								<label className='flex items-center mb-2 italic'>
+									Kategorie:{' '}
+								</label>
 								<p className='mb-2 ml-2 border-2 rounded-md p-1 bg-orange-500 text-white'>
 									{categoryOptions.find(
 										(option) => option.value === selectedRecipe.category
