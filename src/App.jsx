@@ -9,7 +9,7 @@ import {
 	BrowserRouter as Router,
 	Routes,
 } from 'react-router-dom';
-import { ToastContainer } from 'react-toastify';
+import { ToastContainer, Zoom } from 'react-toastify';
 import 'react-toastify/dist/ReactToastify.css';
 import AddRecipe from './components/AddRecipe';
 import Login from './components/Login';
@@ -141,7 +141,7 @@ function App() {
 					pauseOnHover
 					draggable
 					pauseOnFocusLoss
-					transition={zoom}
+					transition:Zoom
 				/>
 			</div>
 		</Router>
