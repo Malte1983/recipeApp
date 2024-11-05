@@ -1,25 +1,23 @@
 import {
+	arrayRemove,
+	arrayUnion,
 	collection,
-	getDocs,
+	deleteDoc,
 	doc,
 	getDoc,
+	getDocs,
 	setDoc,
 	updateDoc,
-	deleteDoc,
-	arrayUnion,
-	arrayRemove,
-	ref,
-	uploadBytes,
-	getDownloadURL
 } from 'firebase/firestore';
-import { storage, db } from './firebase'; // Stellen Sie sicher, dass diese Pfade korrekt sind.
+import { getDownloadURL, ref, uploadBytes } from 'firebase/storage';
+import { db, storage } from './firebase';
 
 // Rezepte abrufen
 export const fetchRecipes = async () => {
 	try {
 		const recipeCollection = collection(db, 'recipes');
 		const recipeSnapshot = await getDocs(recipeCollection);
-		return recipeSnapshot.docs.map(doc => ({
+		return recipeSnapshot.docs.map((doc) => ({
 			id: doc.id,
 			...doc.data(),
 		}));
