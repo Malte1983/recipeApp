@@ -19,8 +19,8 @@ import {
 	FaPencilAlt,
 	FaPlusCircle,
 	FaTrash,
-} from 'react-icons/fa'; // Icons für Favoriten
-import { toast } from 'react-toastify'; // Toast-Nachricht
+} from 'react-icons/fa';
+import { toast } from 'react-toastify';
 import { auth, db, storage } from '../firebase';
 import unitOptions from '../unitOptions';
 
@@ -33,7 +33,7 @@ function RecipeList() {
 	const [editedIngredients, setEditedIngredients] = useState([]);
 	const [editedSteps, setEditedSteps] = useState([]);
 	const [editedImage, setEditedImage] = useState(null);
-	const [user] = useAuthState(auth); // Benutzerdaten holen
+	const [user] = useAuthState(auth);
 	const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 	const [portions, setPortions] = useState(4);
 	const [searchTerm, setSearchTerm] = useState('');
@@ -78,7 +78,7 @@ function RecipeList() {
 
 	const vibrate = () => {
 		if (navigator.vibrate) {
-			navigator.vibrate(100); // Vibrieren für 100 Millisekunden
+			navigator.vibrate(100);
 		}
 	};
 
@@ -97,10 +97,10 @@ function RecipeList() {
 		}
 
 		try {
-			let imageUrl = selectedRecipe.imageUrl; // Verwenden Sie die alte Bild-URL als Standard
+			let imageUrl = selectedRecipe.imageUrl;
 
 			if (editedImage) {
-				imageUrl = await uploadImage(editedImage); // Bild hochladen und URL abrufen
+				imageUrl = await uploadImage(editedImage);
 			}
 
 			const recipeRef = doc(db, 'recipes', id);
@@ -114,7 +114,6 @@ function RecipeList() {
 
 			toast.success('Änderungen erfolgreich gespeichert!');
 
-			// Aktualisiere die Rezeptliste im Zustand
 			setRecipes((prevRecipes) =>
 				prevRecipes.map((recipe) =>
 					recipe.id === id
@@ -130,7 +129,6 @@ function RecipeList() {
 				)
 			);
 
-			// Aktualisiere selectedRecipe mit den neuesten Änderungen
 			setSelectedRecipe({
 				id: id,
 				title: editedTitle,
@@ -154,7 +152,7 @@ function RecipeList() {
 				const recipeRef = doc(db, 'recipes', id);
 				await deleteDoc(recipeRef);
 				toast.success('Rezept erfolgreich gelöscht!');
-				// Rezept aus der Liste entfernen
+
 				setRecipes((prevRecipes) =>
 					prevRecipes.filter((recipe) => recipe.id !== id)
 				);
@@ -178,36 +176,33 @@ function RecipeList() {
 	};
 
 	const handleImageChange = (e) => {
-		const file = e.target.files[0]; // Holen Sie sich die hochgeladene Datei
+		const file = e.target.files[0];
 		if (file) {
-			// Überprüfen des Dateiformats und der Größe
 			const validFormats = [
 				'image/jpeg',
 				'image/jpg',
 				'image/png',
 				'image/bmp',
-			]; // Erlaubte Formate
+			];
 			const maxSize = 5 * 1024 * 1024; // 5 MB in Bytes
 
-			// Überprüfen des Dateiformats
 			if (!validFormats.includes(file.type)) {
 				toast.error(
 					'Bitte laden Sie nur Bilder im JPEG, JPG, PNG oder BMP Format hoch.'
-				); // Fehlermeldung für ungültige Formate
-				e.target.value = ''; // Setze das Eingabefeld zurück
-				setEditedImage(null); // Setze das Bild auf null, wenn das Format ungültig ist
+				);
+				e.target.value = '';
+				setEditedImage(null);
 				return;
 			}
 
-			// Überprüfen der Dateigröße
 			if (file.size > maxSize) {
-				toast.error('Die Datei darf maximal 5 MB groß sein.'); // Fehlermeldung für zu große Dateien
-				e.target.value = ''; // Setze das Eingabefeld zurück
-				setEditedImage(null); // Setze das Bild auf null, wenn die Datei zu groß ist
+				toast.error('Die Datei darf maximal 5 MB groß sein.'); //
+				e.target.value = '';
+				setEditedImage(null);
 				return;
 			}
 
-			setEditedImage(file); // Setze das Bild, wenn es gültig ist
+			setEditedImage(file);
 		}
 	};
 
@@ -245,19 +240,16 @@ function RecipeList() {
 		setEditedImage(null);
 	};
 
-	// Funktion zum Hinzufügen von Rezepten zu den Favoriten
 	const addFavorite = async (recipeId) => {
 		const favoritesRef = doc(db, 'favorites', user.uid);
 		const favoritesDoc = await getDoc(favoritesRef);
 
 		if (favoritesDoc.exists()) {
-			// Dokument existiert, füge das Rezept zu den Favoriten hinzu
 			await updateDoc(favoritesRef, {
 				favoriteRecipes: arrayUnion(recipeId),
 			});
-			setFavoriteRecipes((prevFavorites) => [...prevFavorites, recipeId]); // Aktualisiere den Zustand
+			setFavoriteRecipes((prevFavorites) => [...prevFavorites, recipeId]);
 		} else {
-			// Dokument existiert nicht, erstelle es mit dem neuen Rezept
 			await setDoc(favoritesRef, {
 				userId: user.uid,
 				favoriteRecipes: [recipeId],
@@ -267,50 +259,44 @@ function RecipeList() {
 		toast.success('Rezept als Favorit gespeichert!');
 	};
 
-	// Funktion zum Entfernen von Rezepten aus den Favoriten
 	const removeFavorite = async (recipeId) => {
 		const favoritesRef = doc(db, 'favorites', user.uid);
 		const favoritesDoc = await getDoc(favoritesRef);
 
 		if (favoritesDoc.exists()) {
-			// Dokument existiert, entferne das Rezept aus den Favoriten
 			await updateDoc(favoritesRef, {
 				favoriteRecipes: arrayRemove(recipeId),
 			});
 			setFavoriteRecipes((prevFavorites) =>
 				prevFavorites.filter((id) => id !== recipeId)
-			); // Aktualisiere den Zustand
+			);
 			toast.success('Rezept aus Favoriten entfernt!');
 		} else {
 			toast.error('Favoriten-Dokument existiert nicht.');
 		}
 	};
 
-	// Funktion zum Überprüfen, ob das Rezept ein Favorit ist
 	const isFavorite = (recipeId) => {
 		return favoriteRecipes.includes(recipeId);
 	};
 
 	const scaleIngredients = (ingredients, basePortions, newPortions) => {
 		return ingredients.map((ingredient) => {
-			// Überprüfen, ob die Menge „nach Bedarf“ ist oder ein numerischer Wert vorliegt
 			const scaledAmount =
 				ingredient.amount && !isNaN(ingredient.amount)
 					? (parseFloat(ingredient.amount) / basePortions) * newPortions
-					: ingredient.amount; // Belasse „nach Bedarf“ unverändert
+					: ingredient.amount;
 
-			// Runden der Menge, wenn es ein numerischer Wert ist
 			const roundedAmount =
 				typeof scaledAmount === 'number'
-					? Math.round(scaledAmount * 100) / 100 // auf 2 Dezimalstellen runden
-					: scaledAmount; // Belasse „nach Bedarf“ unverändert
+					? Math.round(scaledAmount * 100) / 100
+					: scaledAmount;
 
 			return { ...ingredient, amount: roundedAmount };
 		});
 	};
 
 	const formatAmount = (amount) => {
-		// Überprüfen, ob die Menge „nach Bedarf“ ist
 		return amount === 'nach Bedarf'
 			? amount
 			: Number.isInteger(amount)
@@ -321,9 +307,9 @@ function RecipeList() {
 	const handlePortionChange = (newPortions) => {
 		if (!isNaN(newPortions) && newPortions > 0) {
 			setPortions(newPortions);
-			// Optional: Zutaten neu skalieren, wenn die Portionen geändert werden
-			const scaledIngredients = scaleIngredients(ingredients, 4, newPortions); // Angenommen 4 ist die Basisanzahl
-			setIngredients(scaledIngredients); // Hiermit kannst du die Zutaten aktualisieren
+
+			const scaledIngredients = scaleIngredients(ingredients, 4, newPortions);
+			setIngredients(scaledIngredients);
 		}
 	};
 
