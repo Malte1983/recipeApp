@@ -475,11 +475,15 @@ function RecipeList() {
 								className='w-full h-64 object-cover mb-4 rounded-lg'
 							/>
 							<p className='mb-2'>{selectedRecipe.description}</p>
-							<p className='mb-2 uppercase font-bold underline underline-offset-2'>
-								{categoryOptions.find(
-									(option) => option.value === selectedRecipe.category
-								)?.label || 'Kategorie nicht gefunden'}
-							</p>
+							<div className='flex'>
+								<label className='flex items-center mb-2'>Kategorie: </label>
+								<p className='mb-2 ml-2 border-2 rounded-md p-1 bg-orange-500 text-white'>
+									{categoryOptions.find(
+										(option) => option.value === selectedRecipe.category
+									)?.label || 'Kategorie nicht gefunden'}
+								</p>
+							</div>
+
 							{/* Portionenauswahl */}
 							<div className='mb-4'>
 								<label className='font-semibold mr-2 '>Portionen:</label>
