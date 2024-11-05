@@ -45,6 +45,7 @@ function RecipeList() {
 	const [user] = useAuthState(auth);
 	const [favoriteRecipes, setFavoriteRecipes] = useState([]);
 	const [portions, setPortions] = useState(4);
+	const [ingredients, setIngredients] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
 
 	useEffect(() => {
