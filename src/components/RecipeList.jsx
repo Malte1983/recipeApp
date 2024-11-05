@@ -47,6 +47,7 @@ function RecipeList() {
 	const [portions, setPortions] = useState(4);
 	const [ingredients, setIngredients] = useState([]);
 	const [searchTerm, setSearchTerm] = useState('');
+	const authorizedUserId = 'O0JyydIVmwSaFi04Lf62kvnuW8A2';
 
 	useEffect(() => {
 		const fetchRecipes = async () => {
@@ -582,12 +583,14 @@ function RecipeList() {
 										>
 											<FaPencilAlt />
 										</button>
-										<button
-											onClick={() => deleteRecipe(selectedRecipe.id)}
-											className='bg-red-500 text-white p-2 rounded mr-2'
-										>
-											<FaTrash />
-										</button>
+										{user.uid === authorizedUserId && ( // Überprüfe, ob der Benutzer autorisiert ist
+											<button
+												onClick={() => deleteRecipe(selectedRecipe.id)}
+												className='bg-red-500 text-white p-2 rounded mr-2'
+											>
+												<FaTrash />
+											</button>
+										)}
 										{/* Favoriten-Button */}
 										{isFavorite(selectedRecipe.id) ? (
 											<button
