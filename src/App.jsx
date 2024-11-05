@@ -141,6 +141,7 @@ function App() {
 					pauseOnHover
 					draggable
 					pauseOnFocusLoss
+					transition={zoom}
 				/>
 			</div>
 		</Router>
