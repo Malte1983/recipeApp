@@ -24,7 +24,6 @@ function RecipeList() {
                     favorites = await fetchFavorites(user.uid);
                     setFavoriteRecipes(favorites);
                 }
-                // Sortiert die Rezepte so, dass Favoriten zuerst stehen
                 const sortedRecipes = loadedRecipes.sort((a, b) =>
                     favorites.includes(b.id) - favorites.includes(a.id)
                 );
@@ -38,15 +37,12 @@ function RecipeList() {
 
     const handleFavoriteClick = async (recipeId) => {
         if (favoriteRecipes.includes(recipeId)) {
-            // Entferne aus Favoriten
             await removeFavorite(user.uid, recipeId);
             setFavoriteRecipes(favoriteRecipes.filter(id => id !== recipeId));
         } else {
-            // Füge zu Favoriten hinzu
             await addFavorite(user.uid, recipeId);
             setFavoriteRecipes([...favoriteRecipes, recipeId]);
         }
-        // Sortiere die Rezepte erneut
         setRecipes(prevRecipes => prevRecipes
             .slice().sort((a, b) =>
                 (favoriteRecipes.includes(b.id) ? 1 : 0) - (favoriteRecipes.includes(a.id) ? 1 : 0)
@@ -90,7 +86,7 @@ function RecipeList() {
                             {recipe.description}
                         </p>
                         <div onClick={(e) => {
-                            e.stopPropagation(); // Verhindert, dass der Klick Event zum Rezept-Container propagiert.
+                            e.stopPropagation();
                             handleFavoriteClick(recipe.id);
                         }}>
                             {favoriteRecipes.includes(recipe.id) ? (
