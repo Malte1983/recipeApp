@@ -1,12 +1,14 @@
 import { signInWithEmailAndPassword } from 'firebase/auth';
-import React from 'react';
+import React, { useState } from 'react';
 import { useAuthState } from 'react-firebase-hooks/auth';
+import { BiSolidHide, BiSolidShow } from 'react-icons/bi';
 import { useNavigate } from 'react-router-dom';
 import { auth } from '../firebase';
 
 function Login() {
 	const [user] = useAuthState(auth);
 	const navigate = useNavigate();
+	const [showPassword, setShowPassword] = useState(false);
 
 	// Überprüfen, ob der Benutzer eingeloggt ist
 	React.useEffect(() => {
@@ -40,13 +42,26 @@ function Login() {
 						required
 						className='border border-gray-300 p-3 w-full mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
 					/>
-					<input
-						type='password'
-						name='password'
-						placeholder='Passwort'
-						required
-						className='border border-gray-300 p-3 w-full mb-4 rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
-					/>
+					<div className='relative mb-4'>
+						<input
+							type={showPassword ? 'text' : 'password'} // Zeige Passwort oder nicht
+							name='password'
+							placeholder='Passwort'
+							required
+							className='border border-gray-300 p-3 w-full rounded focus:outline-none focus:ring-2 focus:ring-blue-500'
+						/>
+						<button
+							type='button'
+							className='absolute inset-y-0 right-0 pr-3 flex items-center text-gray-500'
+							onClick={() => setShowPassword(!showPassword)} // Umschalten der Sichtbarkeit
+						>
+							{showPassword ? (
+								<BiSolidHide size={25} />
+							) : (
+								<BiSolidShow size={25} />
+							)}
+						</button>
+					</div>
 					<button
 						type='submit'
 						className='bg-blue-500 text-white py-2 px-4 rounded w-full hover:bg-blue-600 transition'

@@ -479,12 +479,12 @@ function RecipeList() {
 								alt={selectedRecipe.title}
 								className='w-full h-64 object-cover mb-4 rounded-lg'
 							/>
-							<p className='mb-2'>{selectedRecipe.description}</p>
+							<p className='mb-2 '>{selectedRecipe.description}</p>
 							<div className='flex'>
 								<label className='flex items-center mb-2 italic'>
 									Kategorie:{' '}
 								</label>
-								<p className='mb-2 ml-2 border-2 rounded-md p-1 bg-orange-500 text-white'>
+								<p className='mb- ml-2 border-2 rounded-md p-1 bg-orange-500 text-white'>
 									{categoryOptions.find(
 										(option) => option.value === selectedRecipe.category
 									)?.label || 'Keine'}
