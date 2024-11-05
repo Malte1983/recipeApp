@@ -24,6 +24,14 @@ import { toast } from 'react-toastify';
 import { auth, db, storage } from '../firebase';
 import unitOptions from '../unitOptions';
 
+const categoryOptions = [
+	{ value: 'dessert', label: 'Dessert' },
+	{ value: 'main_course', label: 'Hauptgericht' },
+	{ value: 'appetizer', label: 'Vorspeise' },
+	{ value: 'snack', label: 'Snack' },
+	// Weitere Kategorien können hinzugefügt werden
+];
+
 function RecipeList() {
 	const [recipes, setRecipes] = useState([]);
 	const [editing, setEditing] = useState(null);
@@ -31,6 +39,7 @@ function RecipeList() {
 	const [editedTitle, setEditedTitle] = useState('');
 	const [editedDescription, setEditedDescription] = useState('');
 	const [editedIngredients, setEditedIngredients] = useState([]);
+	const [editedCategory, setEditedCategory] = useState('');
 	const [editedSteps, setEditedSteps] = useState([]);
 	const [editedImage, setEditedImage] = useState(null);
 	const [user] = useAuthState(auth);
@@ -71,6 +80,7 @@ function RecipeList() {
 	const startEditing = (recipe) => {
 		setEditing(recipe.id);
 		setEditedTitle(recipe.title);
+		setEditedCategory(recipe.category);
 		setEditedDescription(recipe.description);
 		setEditedIngredients(recipe.ingredients || []);
 		setEditedSteps(recipe.steps || []);
@@ -90,7 +100,8 @@ function RecipeList() {
 			editedIngredients.length === 0 ||
 			editedIngredients.some((ing) => !ing.name || !ing.amount) ||
 			editedSteps.length === 0 ||
-			editedSteps.some((step) => !step.trim())
+			editedSteps.some((step) => !step.trim()) ||
+			!editedCategory
 		) {
 			toast.error('Bitte füllen Sie alle erforderlichen Felder aus.');
 			return;
@@ -110,6 +121,7 @@ function RecipeList() {
 				ingredients: editedIngredients,
 				steps: editedSteps,
 				imageUrl: imageUrl,
+				category: editedCategory,
 			});
 
 			toast.success('Änderungen erfolgreich gespeichert!');
@@ -124,6 +136,7 @@ function RecipeList() {
 								ingredients: editedIngredients,
 								steps: editedSteps,
 								imageUrl: imageUrl,
+								category: editedCategory,
 						  }
 						: recipe
 				)
@@ -136,6 +149,7 @@ function RecipeList() {
 				ingredients: editedIngredients,
 				steps: editedSteps,
 				imageUrl: imageUrl,
+				category: editedCategory,
 			});
 
 			setEditing(null);
@@ -238,6 +252,7 @@ function RecipeList() {
 		setEditedIngredients([]);
 		setEditedSteps([]);
 		setEditedImage(null);
+		setEditedCategory('');
 	};
 
 	const addFavorite = async (recipeId) => {
@@ -353,6 +368,20 @@ function RecipeList() {
 								onChange={handleImageChange}
 								className='mb-4'
 							/>
+							<select
+								value={editedCategory}
+								onChange={(e) => setEditedCategory(e.target.value)}
+								className='border p-2 w-full mb-4'
+							>
+								<option value='' disabled>
+									Wählen Sie eine Kategorie
+								</option>
+								{categoryOptions.map((option) => (
+									<option key={option.value} value={option.value}>
+										{option.label}
+									</option>
+								))}
+							</select>
 
 							<h4 className='font-semibold mb-2'>Zutaten</h4>
 							<div className='mb-4'>
@@ -446,6 +475,11 @@ function RecipeList() {
 								className='w-full h-64 object-cover mb-4 rounded-lg'
 							/>
 							<p className='mb-2'>{selectedRecipe.description}</p>
+							<p className='mb-2 uppercase font-bold underline underline-offset-2'>
+								{categoryOptions.find(
+									(option) => option.value === selectedRecipe.category
+								)?.label || 'Kategorie nicht gefunden'}
+							</p>
 							{/* Portionenauswahl */}
 							<div className='mb-4'>
 								<label className='font-semibold mr-2 '>Portionen:</label>

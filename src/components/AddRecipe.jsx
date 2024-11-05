@@ -7,6 +7,14 @@ import { toast } from 'react-toastify';
 import { db, storage } from '../firebase';
 import unitOptions from '../unitOptions';
 
+const categoryOptions = [
+	{ value: 'dessert', label: 'Dessert' },
+	{ value: 'main_course', label: 'Hauptgericht' },
+	{ value: 'appetizer', label: 'Vorspeise' },
+	{ value: 'snack', label: 'Snack' },
+	// Weitere Kategorien können hinzugefügt werden
+];
+
 function AddRecipe() {
 	const [title, setTitle] = useState('');
 	const [description, setDescription] = useState('');
@@ -21,6 +29,7 @@ function AddRecipe() {
 	const [currentStep, setCurrentStep] = useState('');
 	const [imagePreview, setImagePreview] = useState(null);
 	const [portions, setPortions] = useState(4);
+	const [category, setCategory] = useState('');
 	const navigate = useNavigate();
 
 	const handleImageChange = (e) => {
@@ -95,7 +104,8 @@ function AddRecipe() {
 			ingredients.length === 0 ||
 			ingredients.some((ing) => !ing.name || !ing.amount) ||
 			steps.length === 0 ||
-			steps.some((step) => !step.trim())
+			steps.some((step) => !step.trim()) ||
+			!category
 		) {
 			toast.error('Bitte füllen Sie alle erforderlichen Felder aus.');
 			return false;
@@ -122,6 +132,7 @@ function AddRecipe() {
 				imageUrl,
 				ingredients,
 				steps,
+				category,
 			});
 			setTitle('');
 			setDescription('');
@@ -129,6 +140,7 @@ function AddRecipe() {
 			setIngredients([]);
 			setSteps([]);
 			setImagePreview(null);
+			setCategory('');
 			toast.success('Rezept erfolgreich hinzugefügt!');
 			navigate('/');
 		} catch (error) {
@@ -182,6 +194,21 @@ function AddRecipe() {
 						</button>
 					</div>
 				)}
+				<h3 className='text-lg font-medium mb-2'>Kategorie</h3>
+				<select
+					value={category}
+					onChange={(e) => setCategory(e.target.value)}
+					className='w-full p-2 mb-4 border rounded-md focus:outline-none focus:ring-2 focus:ring-blue-400'
+				>
+					<option value='' disabled>
+						Wählen Sie eine Kategorie
+					</option>
+					{categoryOptions.map((option) => (
+						<option key={option.value} value={option.value}>
+							{option.label}
+						</option>
+					))}
+				</select>
 
 				<div className='mb-4'>
 					<label className='font-semibold mr-2'>Portionen:</label>
@@ -189,6 +216,7 @@ function AddRecipe() {
 						type='number'
 						value={portions}
 						min='1'
+						onChange={(e) => setPortions(e.target.value)}
 						className='border p-1 w-14 text-center'
 					/>
 				</div>
