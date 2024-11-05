@@ -480,7 +480,7 @@ function RecipeList() {
 								<p className='mb-2 ml-2 border-2 rounded-md p-1 bg-orange-500 text-white'>
 									{categoryOptions.find(
 										(option) => option.value === selectedRecipe.category
-									)?.label || 'Kategorie nicht gefunden'}
+									)?.label || 'Keine'}
 								</p>
 							</div>
 
